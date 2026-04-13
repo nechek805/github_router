@@ -63,3 +63,7 @@ Example (replace paths and values with yours):
   }
 ]
 ```
+
+## License
+
+[MIT](LICENSE).
