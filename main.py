@@ -1,8 +1,13 @@
 import json
+import subprocess
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
-config_path = Path(r"C:\Users\boben\.ssh\config")
-data_path = Path("./data.json")
+load_dotenv()
+
+config_path = Path(os.getenv("CONFIG_PATH"))
+data_path = Path(os.getenv("DATA_PATH"))
 
 
 def get_config():
@@ -59,6 +64,28 @@ def write_config_identity_file(identity_file):
         config_file.write("\n".join(lines) + "\n")
 
 
+def get_git_global(key: str) -> str | None:
+    result = subprocess.run(
+        ["git", "config", "--global", "--get", key],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip() or None
+
+
+def set_git_global_identity(name: str, email: str) -> None:
+    subprocess.run(
+        ["git", "config", "--global", "user.name", name],
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "--global", "user.email", email],
+        check=True,
+    )
+
+
 data = get_data()
 current_config_identity_file = get_config_identity_file()
 
@@ -79,4 +106,14 @@ if int_input_data not in [item["id"] for item in data]:
 
 selected_item = next(item for item in data if item["id"] == int_input_data)
 write_config_identity_file(selected_item["sshPath"])
+
+new_mail = selected_item["mail"]
+new_name = selected_item["name"]
+prev_mail = get_git_global("user.email")
+if prev_mail != new_mail:
+    set_git_global_identity(new_name, new_mail)
+    print(f"Git global user updated: {new_name=} {new_mail=}")
+else:
+    print("Git global user.email unchanged; skipped git config.")
+
 print("Config updated successfully.")
