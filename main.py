@@ -85,15 +85,32 @@ def set_git_global_identity(name: str, email: str) -> None:
         check=True,
     )
 
+def format_print_message(data, space_len: int = 3) -> str:
+    messages = []
+    max_label_len = 10
+    space = " " * space_len
+    for item in data:
+        if len(item["label"]) > max_label_len:
+            max_label_len = len(item["label"])
+
+        line = [item['id'], item["label"], item['mail']]
+        if item["sshPath"] == current_config_identity_file:
+            line[-1] += space + "*selected*"
+        messages.append(line)
+    
+    
+    messages_formated = [f"{item[0]}{space}{item[1] + (" "*(max_label_len-len(item[1])))}{space}{item[2]}" for item in messages]
+    return "\n\n".join(messages_formated)
+
 
 data = get_data()
 current_config_identity_file = get_config_identity_file()
 
-for item in data:
-    if item["sshPath"] == current_config_identity_file:
-        print(f"{item['id']=}. {item['mail']=} *selected*")
-    else:
-        print(f"{item['id']=}. {item['mail']=}")
+if not data:
+    print("Data is empty.")
+    exit()
+
+print(format_print_message(data))
 
 input_data = input("Enter the num: ").strip()
 if not input_data.isdigit():
