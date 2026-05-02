@@ -47,6 +47,7 @@ The script lists profiles, marks the one matching the current `IdentityFile`, as
 | Field     | Type   | Description |
 | --------- | ------ | ----------- |
 | `id`      | number | Value you enter in the prompt; must be unique across entries. |
+| `label`   | string | The label is used for clearer display. |
 | `mail`    | string | Email used for `git config --global user.email` when this profile is selected and the global email changes. |
 | `sshPath` | string | Absolute path to the **private** SSH key file used in `IdentityFile` for `Host github.com`. On Windows use escaped backslashes (`\\`) in JSON. |
 | `name`    | string | GitHub username (or any display name) used for `git config --global user.name` together with `mail`. |
@@ -57,6 +58,7 @@ Example (replace paths and values with yours):
 [
   {
     "id": 1,
+    "label": "my_label",
     "mail": "you@example.com",
     "sshPath": "C:\\Users\\you\\.ssh\\id_ed25519_work",
     "name": "work-account"
